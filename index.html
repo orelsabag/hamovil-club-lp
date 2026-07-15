@@ -236,8 +236,25 @@
   .store .num { font-family: 'Heebo', sans-serif; font-size: clamp(56px, 10vw, 120px); font-weight: 900; line-height: 1; text-shadow: 0 4px 24px rgba(0,0,0,.5); }
   .store .num small { font-size: .38em; font-weight: 800; color: #ff6b6b; }
   .store p { font-size: clamp(16px, 2.2vw, 22px); margin-top: 10px; color: rgba(255,255,255,.92); text-shadow: 0 2px 12px rgba(0,0,0,.6); }
-  .store .brands { margin-top: 18px; font-family: 'Heebo', sans-serif; font-weight: 700; font-size: clamp(13px, 1.6vw, 16px); letter-spacing: .06em; color: rgba(255,255,255,.75); }
   .store .loc { margin-top: 12px; font-size: 15px; color: rgba(255,255,255,.65); }
+
+  /* ============ BRANDS MARQUEE ============ */
+  .brands { background: #fff; padding-block: clamp(36px, 5vw, 56px); overflow: hidden; }
+  .brands h2 { font-size: clamp(18px, 2.4vw, 24px); font-weight: 800; text-align: center; color: var(--navy); }
+  .brands h2 em { font-style: normal; color: var(--red); }
+  /* direction:ltr — קריטי ללופ חלק: ב-RTL translateX פותח פער בקצה. ללוגואים אין כיוון. */
+  .marquee { margin-top: clamp(22px, 3vw, 34px); overflow: hidden; position: relative; direction: ltr; }
+  /* דהייה בקצוות */
+  .marquee::before, .marquee::after {
+    content: ""; position: absolute; top: 0; bottom: 0; width: 90px; z-index: 2; pointer-events: none;
+  }
+  .marquee::before { inset-inline-start: 0; background: linear-gradient(to left, transparent, #fff); }
+  .marquee::after  { inset-inline-end: 0; background: linear-gradient(to right, transparent, #fff); }
+  .track { display: flex; align-items: center; gap: clamp(44px, 6vw, 80px); width: max-content; animation: brands-scroll 45s linear infinite; padding-inline: 20px; }
+  .track img { height: clamp(34px, 4.5vw, 52px); width: auto; max-width: 150px; object-fit: contain; flex-shrink: 0; }
+  @keyframes brands-scroll { to { transform: translateX(-50%); } }
+  .marquee:hover .track { animation-play-state: paused; }
+  @media (prefers-reduced-motion: reduce) { .track { animation: none; flex-wrap: wrap; width: auto; justify-content: center; } }
 
   /* ============ IDO ============ */
   .ido-grid { display: grid; grid-template-columns: 1fr; gap: 32px; align-items: center; }
@@ -457,10 +474,27 @@
   <div class="wrap">
     <div class="num">2,500 <small>מ"ר</small></div>
     <p>של מוצרים לבית, לגינה ולמקצוענים — בהנחת חברי מועדון.</p>
-    <p class="brands">BOSCH · MAKITA · WÜRTH · KÄRCHER · BLUNDSTONE · ROKER</p>
     <p class="loc">📍 כניסה ראשית דיר אל אסד-בענה</p>
   </div>
 </section>
+
+<!-- ============ BRANDS MARQUEE ============ -->
+<section class="brands">
+  <div class="wrap">
+    <h2>המותגים המובילים בעולם — <em>אצלנו על המדף.</em></h2>
+  </div>
+  <div class="marquee">
+    <div class="track" id="brands-track"></div>
+  </div>
+</section>
+<script>
+  (function () {
+    const logos = ['bosch.svg','makita.svg','dewalt.svg','milwaukee.svg','stanley.svg','karcher.svg','wurth.svg','metabo.svg','ryobi.svg','einhell.svg','stihl.svg','husqvarna.svg','gardena.svg','keter.png','tambour: skip','blundstone.png','redback.png','bestway.png','wagner.svg','atmor.svg','total-tools.svg'].filter(l => !l.includes(':'));
+    const names = { bosch:'Bosch', makita:'Makita', dewalt:'DeWalt', milwaukee:'Milwaukee', stanley:'Stanley', karcher:'Kärcher', wurth:'Würth', metabo:'Metabo', ryobi:'Ryobi', einhell:'Einhell', stihl:'Stihl', husqvarna:'Husqvarna', gardena:'Gardena', keter:'Keter', blundstone:'Blundstone', redback:'Redback', bestway:'Bestway', wagner:'Wagner', atmor:'Atmor', 'total-tools':'Total Tools' };
+    const html = logos.map(l => { const k = l.replace(/\.(svg|png)$/, ''); return `<img src="assets/logos/${l}" alt="${names[k] || k}">`; }).join('');
+    document.getElementById('brands-track').innerHTML = html + html; /* שכפול = לופ אינסופי חלק */
+  })();
+</script>
 
 <!-- ============ IDO ============ -->
 <section>
