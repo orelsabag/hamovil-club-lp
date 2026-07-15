@@ -237,11 +237,18 @@
   /* ============ IDO ============ */
   .ido-grid { display: grid; grid-template-columns: 1fr; gap: 32px; align-items: center; }
   @media (min-width: 820px) { .ido-grid { grid-template-columns: .9fr 1.1fr; } }
-  .ido-ph {
-    aspect-ratio: 3/4; max-width: 320px; margin-inline: auto;
-    border: 2px dashed #cbd5e1; border-radius: 18px;
-    display: flex; align-items: center; justify-content: center; text-align: center;
-    color: #94a3b8; font-size: 14px; padding: 20px; background: var(--bg);
+  .ido-photo { position: relative; max-width: 380px; margin-inline: auto; }
+  .ido-photo img { border-radius: 18px; box-shadow: 0 20px 50px rgba(22,35,59,.22); }
+  .ido-photo::before {
+    content: ""; position: absolute; inset: 10% -5% -5% 12%;
+    background: linear-gradient(225deg, var(--navy) 0 46%, transparent 46%), linear-gradient(225deg, transparent 0 50%, var(--red) 50% 57%, transparent 57%);
+    border-radius: 18px; z-index: -1; opacity: .14;
+  }
+  .ido-photo .badge {
+    position: absolute; bottom: 14px; inset-inline-start: 14px;
+    background: rgba(10,18,32,.85); color: #fff; backdrop-filter: blur(4px);
+    font-family: 'Heebo', sans-serif; font-weight: 800; font-size: 14px;
+    padding: 7px 14px; border-radius: 10px; border-inline-start: 3px solid var(--red);
   }
   .ido-quote { font-size: clamp(18px, 2.4vw, 24px); font-weight: 500; line-height: 1.75; }
   .ido-quote b { color: var(--navy); }
@@ -451,7 +458,10 @@
 <section>
   <div class="corner tl"><svg viewBox="0 0 100 100" preserveAspectRatio="none"><use href="#card-corner" opacity=".08"/></svg></div>
   <div class="wrap ido-grid">
-    <div class="ido-ph">כאן ייכנס cutout של עידו<br>(LP-4 של משי)</div>
+    <div class="ido-photo">
+      <img src="assets/ido-card.jpg" alt="עידו מהמוביל סנטר מציג את כרטיס המועדון">
+      <span class="badge">עידו · המוביל סנטר</span>
+    </div>
     <blockquote class="ido-quote">
       "אני עידו מהמוביל סנטר. אנשים שואלים אותי כל יום איפה המבצעים האמיתיים. התשובה: <b>במועדון.</b> נרשמים בדקה, חוסכים בכל קנייה — פשוט כמו שזה נשמע.
       <span class="sig">מוביל סנטר — באים, לוקחים, סוגרים עבודה.</span>
