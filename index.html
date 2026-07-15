@@ -243,18 +243,30 @@
   .brands h2 { font-size: clamp(18px, 2.4vw, 24px); font-weight: 800; text-align: center; color: var(--navy); }
   .brands h2 em { font-style: normal; color: var(--red); }
   /* direction:ltr — קריטי ללופ חלק: ב-RTL translateX פותח פער בקצה. ללוגואים אין כיוון. */
-  .marquee { margin-top: clamp(22px, 3vw, 34px); overflow: hidden; position: relative; direction: ltr; }
+  .marquee { --marq-dur: 40s; --marq-gap: clamp(44px, 6vw, 80px); --marq-fade: 90px;
+    margin-top: clamp(22px, 3vw, 34px); overflow: hidden; position: relative; direction: ltr; }
   /* דהייה בקצוות */
   .marquee::before, .marquee::after {
-    content: ""; position: absolute; top: 0; bottom: 0; width: 90px; z-index: 2; pointer-events: none;
+    content: ""; position: absolute; top: 0; bottom: 0; width: var(--marq-fade); z-index: 2; pointer-events: none;
   }
-  .marquee::before { inset-inline-start: 0; background: linear-gradient(to left, transparent, #fff); }
-  .marquee::after  { inset-inline-end: 0; background: linear-gradient(to right, transparent, #fff); }
-  .track { display: flex; align-items: center; gap: clamp(44px, 6vw, 80px); width: max-content; animation: brands-scroll 45s linear infinite; padding-inline: 20px; }
-  .track img { height: clamp(34px, 4.5vw, 52px); width: auto; max-width: 150px; object-fit: contain; flex-shrink: 0; }
-  @keyframes brands-scroll { to { transform: translateX(-50%); } }
-  .marquee:hover .track { animation-play-state: paused; }
-  @media (prefers-reduced-motion: reduce) { .track { animation: none; flex-wrap: wrap; width: auto; justify-content: center; } }
+  .marquee::before { left: 0; background: linear-gradient(to right, #fff, transparent); }
+  .marquee::after  { right: 0; background: linear-gradient(to left, #fff, transparent); }
+  .track { display: flex; width: max-content; }
+  /* שתי קבוצות זהות; כל קבוצה נעה 100% מרוחבה שלה = לופ חלק בכל דפדפן כולל iOS */
+  .grp {
+    display: flex; align-items: center; gap: var(--marq-gap);
+    padding-inline-end: var(--marq-gap);
+    animation: brands-scroll var(--marq-dur) linear infinite;
+    will-change: transform; transform: translateZ(0);
+  }
+  .grp img { height: clamp(40px, 5vw, 52px); width: auto; max-width: 160px; object-fit: contain; flex-shrink: 0; }
+  @keyframes brands-scroll { to { transform: translate3d(-100%, 0, 0); } }
+  .marquee:hover .grp { animation-play-state: paused; }
+  @media (max-width: 768px) {
+    .marquee { --marq-dur: 14s; --marq-gap: 34px; --marq-fade: 26px; }
+    .grp img { height: 42px; max-width: 130px; }
+  }
+  @media (prefers-reduced-motion: reduce) { .grp { animation: none; } .track { flex-wrap: wrap; width: auto; justify-content: center; } }
 
   /* ============ IDO ============ */
   .ido-grid { display: grid; grid-template-columns: 1fr; gap: 32px; align-items: center; }
@@ -484,15 +496,18 @@
     <h2>המותגים המובילים בעולם — <em>אצלנו על המדף.</em></h2>
   </div>
   <div class="marquee">
-    <div class="track" id="brands-track"></div>
+    <div class="track" id="brands-track">
+      <div class="grp"></div>
+      <div class="grp" aria-hidden="true"></div>
+    </div>
   </div>
 </section>
 <script>
   (function () {
-    const logos = ['bosch.svg','makita.svg','dewalt.svg','milwaukee.svg','stanley.svg','karcher.svg','wurth.svg','metabo.svg','ryobi.svg','einhell.svg','stihl.svg','husqvarna.svg','gardena.svg','keter.png','tambour: skip','blundstone.png','redback.png','bestway.png','wagner.svg','atmor.svg','total-tools.svg'].filter(l => !l.includes(':'));
+    const logos = ['bosch.svg','makita.svg','dewalt.svg','milwaukee.svg','stanley.svg','karcher.svg','wurth.svg','metabo.svg','ryobi.svg','einhell.svg','stihl.svg','husqvarna.svg','gardena.svg','keter.png','blundstone.png','redback.png','bestway.png','wagner.svg','atmor.svg','total-tools.svg'];
     const names = { bosch:'Bosch', makita:'Makita', dewalt:'DeWalt', milwaukee:'Milwaukee', stanley:'Stanley', karcher:'Kärcher', wurth:'Würth', metabo:'Metabo', ryobi:'Ryobi', einhell:'Einhell', stihl:'Stihl', husqvarna:'Husqvarna', gardena:'Gardena', keter:'Keter', blundstone:'Blundstone', redback:'Redback', bestway:'Bestway', wagner:'Wagner', atmor:'Atmor', 'total-tools':'Total Tools' };
     const html = logos.map(l => { const k = l.replace(/\.(svg|png)$/, ''); return `<img src="assets/logos/${l}" alt="${names[k] || k}">`; }).join('');
-    document.getElementById('brands-track').innerHTML = html + html; /* שכפול = לופ אינסופי חלק */
+    document.querySelectorAll('#brands-track .grp').forEach(g => g.innerHTML = html);
   })();
 </script>
 
